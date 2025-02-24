@@ -40,7 +40,7 @@ table.appendChild(tableHeader);                      // Hozzáfűzi a fejlécet 
 tableHeader.appendChild(headerRow);                  // A fejléc sorát hozzáfűzi a <thead> elemhez
 
 // Első fejléc cella létrehozása, mely a "Szerző neve" szöveget tartalmazza
-const headerCell1 = document.createElement('th');    
+const headerCell1 = document.createElement('th');
 headerCell1.innerHTML = array[0].column1;            // Beállítja a cella tartalmát az első elem "column1" értékére
 headerRow.appendChild(headerCell1);                  // Hozzáfűzi a cellát a fejléc sorhoz
 
@@ -108,19 +108,46 @@ const koltoNevError = document.getElementById('error-kolto-nev'); // HTML elem l
 const korszakError = document.getElementById('error-korszak'); // HTML elem lekérése, amely a korszakhoz tartozó 
 // Validációs függvény: ellenőrzi, hogy az adott mező nem üres-e
 // A validateField függvény ellenőrzi, hogy egy űrlapmező (columnElement) nem üres-e, és ennek megfelelően kezeli a hozzá tartozó hibaüzenet elem (errorElement) láthatóságát.
-function validateField(columnElement,errorElement){ // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
+function validateField(columnElement, errorElement) { // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
     let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
 
-    if(columnElement.value === ""){  // Ha a bemeneti mező értéke üres
+    if (columnElement.value === "") {  // Ha a bemeneti mező értéke üres
         errorElement.style.display = "block"; // A hibaüzenet megjelenítése láthatóvá válik
         valid = false; // Az érték nem valid, így false-ra állítjuk
-    }else{
+    } else {
         errorElement.style.display = "none"; // Ha a mezőben van érték, elrejtjük a hibaüzenetet
     }
     return valid; // Visszaadja, hogy a mező valid-e
 }
+
+function secondValidation(checkboxElement, szerelem1Element, szerelem2Element) {
+    let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
+
+    if (checkboxElement.checked) {
+        if (szerelem1Element.value === "") { // Ellenőrizzük az első szerelem mezőt
+            const error1 = document.getElementById('error-szerelem1');
+            error1.style.display = "block"; // Megjelenítjük a hibaüzenetet
+            valid = false; // Érvénytelen, mert az első szerelem mező üres
+        } else {
+            document.getElementById('error-szerelem1').style.display = "none"; // Elrejtjük a hibaüzenetet
+        }
+
+        if (szerelem2Element.value === "") { // Ellenőrizzük a második szerelem mezőt
+            const error2 = document.getElementById('error-szerelem2');
+            error2.style.display = "block"; // Megjelenítjük a hibaüzenetet
+            valid = false; // Érvénytelen, mert a második szerelem mező üres
+        } else {
+            document.getElementById('error-szerelem2').style.display = "none"; // Elrejtjük a hibaüzenetet
+        }
+    } else {
+        // Ha a jelölőnégyzet nincs bejelölve, elrejtjük a szerelem mezők esetleges hibaüzeneteit
+        document.getElementById('error-szerelem1').style.display = "none";
+        document.getElementById('error-szerelem2').style.display = "none";
+    }
+    return valid; // Visszaadjuk az eredményt
+}
 // Eseménykezelő beállítása az űrlap submit eseményéhez (amikor az űrlapot elküldik)
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', function (e) {
     e.preventDefault();                             // Megszakítja az űrlap alapértelmezett elküldési műveletét
 
     // Űrlapmezők lekérése a megfelelő id-k alapján
@@ -132,20 +159,24 @@ form.addEventListener('submit', function(e) {
 
 
     let valid = true;
-    
-    if(!validateField(koltoNev,koltoNevError)){ 
+
+    if (!validateField(koltoNev, koltoNevError)) {
         valid = false; // Ha hiba van a szerző neve mezőben, akkor az űrlapot érvénytelennek jelöljük
     }
 
-    if(!validateField(korszak,korszakError)){
+    if (!validateField(korszak, korszakError)) {
         valid = false; // Ha hiba van a korszak mezőben, akkor az űrlapot érvénytelennek jelöljük
     }
 
-    if(!valid){
+    if (!valid) {
         return; // Ha a form nem valid, nem kell tovább folyamatosan továbbítani
     }
+
+    if (!secondValidation(checkbox, szerelem1, szerelem2)) {
+        valid = false; // Ha hiba van a második szerelem mezőkben, akkor az űrlapot érvénytelennek jelöljük
+    }
     // Értékek lekérése és esetlegesen felesleges szóközök levágása (trim-elés)
-    const koltoNevValue = koltoNev.value;        
+    const koltoNevValue = koltoNev.value;
     const korszakValue = korszak.value;
     const szerelem1Value = szerelem1.value;
     const szerelem2Value = szerelem2.value;
@@ -173,13 +204,15 @@ form.addEventListener('submit', function(e) {
         column4: column4           // Második szerelmi adat (vagy undefined ha nincs)
     };
 
-    // Új sor hozzáfűzése a tömbhöz és a táblázat újragenerálása a friss adatokkal
-    array.push(newElement);
-    generateTable();
+    array.push(newElement); // Az új objektum hozzáadása a táblázat adatait tartalmazó tömbhöz
+    table.innerHTML = ''; // Törli a táblázat tartalmát
+    table.appendChild(tableHeader);  // Újra hozzáadja a fejlécet a táblázathoz
+    generateTable(); // Meghívja a függvényt, amely újra létrehozza a táblázat törzsét a módosított array alapján
 
-    // Űrlap mezők alaphelyzetbe állítása a reset metódussal
-    form.reset();
-      // Hibaüzenetek eltüntetése a sikeres hozzáadás után
-    koltoNevError.style.display = 'none';
-    korszakError.style.display = 'none';
+    // Hibaüzenetek eltüntetése a sikeres hozzáadás után
+    szerzoNeve.value = "";
+    korszak.value = "";
+    szerelem1.value = "";
+    szerelem2.value = "";
+    checkbox.checked = false;
 });
