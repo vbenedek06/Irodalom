@@ -1,0 +1,27 @@
+/* Táblázat celláinak egyszeres kerete */
+table {
+    border-collapse: collapse; 
+}
+table, th, td {
+    border: 1px solid black; 
+}
+
+/* A tbody első és utolsó oszlopának háttérszíne */
+tbody td:first-child,
+tbody td:last-child {
+    background-color: #13c873; /* Világos szürke háttér */
+}
+
+/* A fejléc második cellájának háttérszíne */
+thead th:nth-child(2) {
+    background-color: #00ffcc;
+}
+
+/* Hibajelzések stílusa az űrlaphoz */
+.error-message{
+    color: red;               
+    padding: 2px;       
+    margin-top: 4px;       
+    display: block;        
+    min-height: 18px;       
+}

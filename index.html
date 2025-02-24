@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="hu">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Irodalom</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <form id="form" action="#">
+            <div>
+                <label for="kolto_nev">Költő neve:</label><br>
+                <input type="text" id="kolto_nev" name="kolto_nev">
+                <div class="error-message" id="error-kolto-nev">Hiba: Kérjük,
+                    adja meg a költő nevét!</div><br><br>
+            </div>
+            <div>
+                <label for="korszak">Korszak:</label><br>
+                <input type="text" id="korszak" name="korszak">
+                <div class="error-message" id="error-korszak">Hiba: Kérjük, adja
+                    meg a korszakot!</div><br><br>
+            </div>
+            <div>
+                <label for="szerelem1">Szerelme:</label><br>
+                <input type="text" id="szerelem1" name="szerelem1">
+                <div class="error-message" id="error-szerelem1">Hiba: Kérjük,
+                    adja meg az első szerelmet!</div><br><br>
+            </div>
+            <div>
+                <label for="masodik">Volt másik szerelme?</label>
+                <input name="masodik" id="masodik" type="checkbox"><br><br>
+            </div>
+            <div>
+                <label for="szerelem2">Szerelme:</label><br>
+                <input type="text" id="szerelem2" name="szerelem2">
+                <div class="error-message" id="error-szerelem2">Hiba: Kérjük,
+                    adja meg a második szerelmet!</div><br><br>
+            </div>
+
+            <button type="submit">Hozzáadás</button>
+        </form>
+    </body>
+    <script src="main.js"></script>
+</html>
