@@ -103,8 +103,23 @@ function generateTable() {
 // Kezdeti táblázat kirajzolása a generateTable függvény meghívásával
 generateTable();
 
+const form = document.getElementById('form'); // Megkeresi az `form` azonosítójú HTML elemet
+const koltoNevError = document.getElementById('error-kolto-nev'); // HTML elem lekérése, amely a szerző nevéhez tartozó hibaüzenetet jeleníti meg
+const korszakError = document.getElementById('error-korszak'); // HTML elem lekérése, amely a korszakhoz tartozó 
+// Validációs függvény: ellenőrzi, hogy az adott mező nem üres-e
+// A validateField függvény ellenőrzi, hogy egy űrlapmező (columnElement) nem üres-e, és ennek megfelelően kezeli a hozzá tartozó hibaüzenet elem (errorElement) láthatóságát.
+function validateField(columnElement,errorElement){ // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
+    let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
+
+    if(columnElement.value === ""){  // Ha a bemeneti mező értéke üres
+        errorElement.style.display = "block"; // A hibaüzenet megjelenítése láthatóvá válik
+        valid = false; // Az érték nem valid, így false-ra állítjuk
+    }else{
+        errorElement.style.display = "none"; // Ha a mezőben van érték, elrejtjük a hibaüzenetet
+    }
+    return valid; // Visszaadja, hogy a mező valid-e
+}
 // Eseménykezelő beállítása az űrlap submit eseményéhez (amikor az űrlapot elküldik)
-const form = document.getElementById("form");     // Lekéri az űrlap elemet azonosító alapján
 form.addEventListener('submit', function(e) {
     e.preventDefault();                             // Megszakítja az űrlap alapértelmezett elküldési műveletét
 
@@ -115,30 +130,20 @@ form.addEventListener('submit', function(e) {
     const szerelem2 = document.getElementById('szerelem2');
     const checkbox = document.getElementById('masodik');
 
-    // Hibaüzenet elemek lekérése
-    const koltoNevError = document.getElementById('error-kolto-nev');
-    const korszakError = document.getElementById('error-korszak');
 
-    // Hibaüzenetek elrejtése alapértelmezettként
-    koltoNevError.style.display = 'none';
-    korszakError.style.display = 'none';
-
-    let valid = true;                               // Validációs állapot inicializálása
-
-    // Kötelező mezők ellenőrzése: ha a szerző neve üres, megjelenik a hibaüzenet
-    if (koltoNev.value === "") {
-        koltoNevError.style.display = "block";
-        valid = false;
-    }
-    // Kötelező mezők ellenőrzése: ha a korszak üres, megjelenik a hibaüzenet
-    if (korszak.value === "") {
-        korszakError.style.display = "block";
-        valid = false;
-    }
-    if (!valid) {
-        return;                                   // Ha a validáció sikertelen, kilép a függvényből és nem folytatja a további lépéseket
+    let valid = true;
+    
+    if(!validateField(koltoNev,koltoNevError)){ 
+        valid = false; // Ha hiba van a szerző neve mezőben, akkor az űrlapot érvénytelennek jelöljük
     }
 
+    if(!validateField(korszak,korszakError)){
+        valid = false; // Ha hiba van a korszak mezőben, akkor az űrlapot érvénytelennek jelöljük
+    }
+
+    if(!valid){
+        return; // Ha a form nem valid, nem kell tovább folyamatosan továbbítani
+    }
     // Értékek lekérése és esetlegesen felesleges szóközök levágása (trim-elés)
     const koltoNevValue = koltoNev.value;        
     const korszakValue = korszak.value;
@@ -174,4 +179,7 @@ form.addEventListener('submit', function(e) {
 
     // Űrlap mezők alaphelyzetbe állítása a reset metódussal
     form.reset();
+      // Hibaüzenetek eltüntetése a sikeres hozzáadás után
+    koltoNevError.style.display = 'none';
+    korszakError.style.display = 'none';
 });
