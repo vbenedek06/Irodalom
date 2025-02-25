@@ -29,17 +29,11 @@ const array = [
         column4: 'Csinszka'               // Adatsor – második szerelem
     }
 ];
+const table = document.createElement('table'); // Táblázat HTML elem létrehozása
+document.body.appendChild(table); // Hozzáadjuk a táblázatot a dokumentum törzséhez
 
-const table = document.createElement('table'); // Létrehoz egy új <table> elemet
-document.body.appendChild(table);              // Hozzáadja a táblázatot a HTML dokumentum <body> részéhez
-
-// Táblázat fejlécének létrehozása
-const tableHeader = document.createElement('thead');
+const tableHeader = document.createElement('thead'); // Táblázat fejléc elem létrehozása
 table.appendChild(tableHeader);
-
-// Fejléc generálása a generateTableHeader függvénnyel
-generateTableHeader(array[0], tableHeader);
-
 function generateTableHeader(headerData, tableHeader) {
     // Létrehozunk egy új sort (<tr>) a fejléc számára
     const headerRow = document.createElement('tr');
@@ -62,7 +56,7 @@ function generateTableHeader(headerData, tableHeader) {
     tableHeader.appendChild(headerRow);
 }
 // Táblázat törzsének generálása: függvény, amely újragenerálja a táblázat tartalmát
-function generateTable() {
+function generateTable(data) {
     table.innerHTML = '';                          // Törli a táblázat korábbi tartalmát
     table.appendChild(tableHeader);                // Újra hozzáadja a fejlécet a táblázathoz
 
@@ -70,44 +64,44 @@ function generateTable() {
     table.appendChild(tbody);                        // Hozzáfűzi a <tbody>-t a táblázathoz
 
     // Az első tömb elem a fejléc, így az adatsorok indexe 1-től indul
-    for (let i = 1; i < array.length; i++) {
-        const currentElement = array[i];           // Lekéri az aktuális adatsor objektumot
+    for (let i = 1; i < data.length; i++) {
         const row = document.createElement('tr');  // Létrehoz egy új sort (<tr>) az adatsorhoz
         tbody.appendChild(row);                      // Hozzáfűzi az új sort a táblázat törzséhez
 
         // Szerző neve: első oszlop cella létrehozása
         const rowColumn1 = document.createElement('td');
-        rowColumn1.innerHTML = currentElement.column1;  // Beállítja a cella tartalmát a szerző nevére
+        rowColumn1.innerHTML = data[i].column1;  // Beállítja a cella tartalmát a szerző nevére
         row.appendChild(rowColumn1);                      // Hozzáfűzi a cellát a sorhoz
 
         // Korszak: második oszlop cella létrehozása
         const rowColumn2 = document.createElement('td');
-        rowColumn2.innerHTML = currentElement.column2;  // Beállítja a cella tartalmát a korszakra
+        rowColumn2.innerHTML = data[i].column2;  // Beállítja a cella tartalmát a korszakra
         row.appendChild(rowColumn2);                     // Hozzáfűzi a cellát a sorhoz
 
         // Szerelmek: ellenőrzi, hogy van-e column4 érték, hogy két külön cellát vagy egy összevont cellát kell-e létrehozni
-        if (!currentElement.column4) {
+        if (!data[i].column4) {
             // Ha nincs második szerelmi adat, akkor egy cella, két oszlopot lefedő cella készül
             const rowColumn3 = document.createElement('td');
             // Ha a column3 üres, akkor "-" jelenik meg, egyébként a column3 értéke
-            rowColumn3.innerHTML = (currentElement.column3 === "" ? "-" : currentElement.column3);
+            rowColumn3.innerHTML = (data[i].column3 === "" ? "-" : data[i].column3);
             rowColumn3.colSpan = 2;                    // A cella két oszlopot foglal el
             row.appendChild(rowColumn3);               // Hozzáfűzi a cellát a sorhoz
         } else {
             // Ha van második szerelmi adat, akkor két külön cellát hoz létre
             const rowColumn3 = document.createElement('td');
-            rowColumn3.innerHTML = (currentElement.column3 === "" ? "-" : currentElement.column3);
+            rowColumn3.innerHTML = (data[i].column3 === "" ? "-" : data[i].column3);
             row.appendChild(rowColumn3);               // Hozzáfűzi az első szerelmi adatot tartalmazó cellát a sorhoz
 
             const rowColumn4 = document.createElement('td');
-            rowColumn4.innerHTML = (currentElement.column4 === "" ? "-" : currentElement.column4);
+            rowColumn4.innerHTML = (data[i].column4 === "" ? "-" : data[i].column4);
             row.appendChild(rowColumn4);               // Hozzáfűzi a második szerelmi adatot tartalmazó cellát a sorhoz
         }
     }
 }
-
+// Fejléc létrehozása és az első táblázat kirajzolása
+generateTableHeader(array[0], tableHeader);
 // Kezdeti táblázat kirajzolása a generateTable függvény meghívásával
-generateTable();
+generateTable(array);
 
 const form = document.getElementById('form'); // Megkeresi az `form` azonosítójú HTML elemet
 const koltoNevError = document.getElementById('error-kolto-nev'); // HTML elem lekérése, amely a szerző nevéhez tartozó hibaüzenetet jeleníti meg
@@ -213,10 +207,10 @@ form.addEventListener('submit', function (e) {
     array.push(newElement); // Az új objektum hozzáadása a táblázat adatait tartalmazó tömbhöz
     table.innerHTML = ''; // Törli a táblázat tartalmát
     table.appendChild(tableHeader);  // Újra hozzáadja a fejlécet a táblázathoz
-    generateTable(); // Meghívja a függvényt, amely újra létrehozza a táblázat törzsét a módosított array alapján
+    generateTable(array); // Meghívja a függvényt, amely újra létrehozza a táblázat törzsét a módosított data alapján
 
     // Hibaüzenetek eltüntetése a sikeres hozzáadás után
-    szerzoNeve.value = "";
+    koltoNev.value = "";
     korszak.value = "";
     szerelem1.value = "";
     szerelem2.value = "";
