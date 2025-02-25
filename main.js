@@ -34,27 +34,33 @@ const table = document.createElement('table'); // Létrehoz egy új <table> elem
 document.body.appendChild(table);              // Hozzáadja a táblázatot a HTML dokumentum <body> részéhez
 
 // Táblázat fejlécének létrehozása
-const tableHeader = document.createElement('thead'); // Létrehoz egy <thead> elemet a táblázat fejlécéhez
-const headerRow = document.createElement('tr');      // Létrehoz egy <tr> sort a fejléc számára
-table.appendChild(tableHeader);                      // Hozzáfűzi a fejlécet a táblázathoz
-tableHeader.appendChild(headerRow);                  // A fejléc sorát hozzáfűzi a <thead> elemhez
+const tableHeader = document.createElement('thead');
+table.appendChild(tableHeader);
 
-// Első fejléc cella létrehozása, mely a "Szerző neve" szöveget tartalmazza
-const headerCell1 = document.createElement('th');
-headerCell1.innerHTML = array[0].column1;            // Beállítja a cella tartalmát az első elem "column1" értékére
-headerRow.appendChild(headerCell1);                  // Hozzáfűzi a cellát a fejléc sorhoz
+// Fejléc generálása a generateTableHeader függvénnyel
+generateTableHeader(array[0], tableHeader);
 
-// Második fejléc cella létrehozása, mely a "Korszak" szöveget tartalmazza
-const headerCell2 = document.createElement('th');
-headerCell2.innerHTML = array[0].column2;            // Beállítja a cella tartalmát az első elem "column2" értékére
-headerRow.appendChild(headerCell2);                  // Hozzáfűzi a cellát a fejléc sorhoz
+function generateTableHeader(headerData, tableHeader) {
+    // Létrehozunk egy új sort (<tr>) a fejléc számára
+    const headerRow = document.createElement('tr');
 
-// Harmadik fejléc cella létrehozása, mely a "Szerelmek" szöveget tartalmazza
-const headerCell3 = document.createElement('th');
-headerCell3.innerHTML = array[0].column3;            // Beállítja a cella tartalmát az első elem "column3" értékére
-headerCell3.colSpan = 2;                             // Megadja, hogy ez a cella két oszlopot foglal el
-headerRow.appendChild(headerCell3);                  // Hozzáfűzi a cellát a fejléc sorhoz
+    // Végigiterálunk a fejléc objektum kulcsain
+    for (const key in headerData) {
+        // Létrehozunk egy fejléc cellát (<th>)
+        const headerCell = document.createElement('th');
+        // Beállítjuk a cella tartalmát a headerData adott kulcsához tartozó értékre
+        headerCell.innerHTML = headerData[key];
 
+        // Ha a kulcs 'column3', akkor két oszlopnyi szélességet állítunk be
+        if (key === 'column3') {
+            headerCell.colSpan = 2;
+        }
+        // Hozzáadjuk a fejléc cellát a fejléc sorhoz
+        headerRow.appendChild(headerCell);
+    }
+    // A kész fejléc sort hozzáadjuk a megadott <thead> elemhez
+    tableHeader.appendChild(headerRow);
+}
 // Táblázat törzsének generálása: függvény, amely újragenerálja a táblázat tartalmát
 function generateTable() {
     table.innerHTML = '';                          // Törli a táblázat korábbi tartalmát
@@ -132,7 +138,7 @@ function secondValidation(checkboxElement, szerelem1Element, szerelem2Element) {
             document.getElementById('error-szerelem1').style.display = "none"; // Elrejtjük a hibaüzenetet
         }
 
-        if (szerelem2Element.value === "") { // Ellenőrizzük a második szerelem mezőt
+        if (szerelem2Element.value === "") { // Ellenőrizzük a második szerelem mezőt 
             const error2 = document.getElementById('error-szerelem2');
             error2.style.display = "block"; // Megjelenítjük a hibaüzenetet
             valid = false; // Érvénytelen, mert a második szerelem mező üres
