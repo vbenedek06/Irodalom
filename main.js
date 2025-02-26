@@ -35,6 +35,15 @@ document.body.appendChild(table); // Hozzáadjuk a táblázatot a dokumentum tö
 const tableHeader = document.createElement('thead'); // Táblázat fejléc elem létrehozása
 table.appendChild(tableHeader);
 
+
+/**
+ * Létrehozza az űrlap elemet és visszaadja azt.
+ *
+ * Az űrlap tartalmazza a költő nevének, korszakának és szerelmi adatainak megadásához szükséges input mezőket,
+ * valamint egy jelölőnégyzetet arra az esetre, ha van második szerelmi adat.
+ *
+ * @returns {HTMLFormElement} Az elkészített <form> elem.
+ */
 // A generateForm függvény létrehozza és visszaadja az űrlap elemet.
 function generateForm() {
     // Új <form> elem létrehozása.
@@ -96,6 +105,16 @@ function generateForm() {
 }
 // A generateForm függvény meghívása, és az eredmény tárolása a formElement változóban.
 const formElement = generateForm();
+/**
+ * Létrehozza a táblázat fejlécét.
+ *
+ * A függvény egy fejléc sort (<tr>) hoz létre a megadott fejléc adatok alapján, és hozzáadja azt a 
+ * paraméterként kapott <thead> elemhez. Ha a fejlécben szerepel a "column3" kulcs, akkor annak cellája két oszlopot foglal.
+ *
+ * @param {Object} headerData - A fejléc adatait tartalmazó objektum, ahol a kulcsok a cellák.
+ * @param {HTMLElement} tableHeader - A <thead> HTML elem, amelyhez a fejléc sort hozzá kell adni.
+ *  */
+
 function generateTableHeader(headerData, tableHeader) {
     // Létrehozunk egy új sort (<tr>) a fejléc számára
     const headerRow = document.createElement('tr');
@@ -117,7 +136,18 @@ function generateTableHeader(headerData, tableHeader) {
     // A kész fejléc sort hozzáadjuk a megadott <thead> elemhez
     tableHeader.appendChild(headerRow);
 }
+
+
+/**
+ * Létrehozza a táblázat törzsét a megadott adatok alapján.
+ *
+ * A függvény törli a korábbi táblázattartalmat, majd létrehozza a <tbody> elemet, és minden adatsorhoz
+ * egy új <tr> sort, ahol a szerző neve, korszak, valamint az első és esetleg második szerelmi adat megjelenítésre kerül.
+ *
+ * @param {Array<Object>} data - A táblázat adatait tartalmazó tömb, ahol az első elem a fejléc.
+ */
 // Táblázat törzsének generálása: függvény, amely újragenerálja a táblázat tartalmát
+
 function generateTable(data) {
     table.innerHTML = '';                          // Törli a táblázat korábbi tartalmát
     table.appendChild(tableHeader);                // Újra hozzáadja a fejlécet a táblázathoz
@@ -170,6 +200,16 @@ const koltoNevError = document.getElementById('error-kolto-nev'); // HTML elem l
 const korszakError = document.getElementById('error-korszak'); // HTML elem lekérése, amely a korszakhoz tartozó 
 // Validációs függvény: ellenőrzi, hogy az adott mező nem üres-e
 // A validatecolumn függvény ellenőrzi, hogy egy űrlapmező (columnElement) nem üres-e, és ennek megfelelően kezeli a hozzá tartozó hibaüzenet elem (errorElement) láthatóságát.
+/**
+ * Validálja, hogy egy adott űrlapmező nem üres-e.
+ *
+ * A függvény ellenőrzi a bemeneti mező (columnElement) értékét, és ha az üres, akkor a hozzá tartozó 
+ * hibaüzenet elemben (errorElement) megjeleníti a hibát.
+ *
+ * @param {HTMLElement} columnElement - Az űrlap input eleme, amelyet validálni kell.
+ * @param {HTMLElement} errorElement - Az elem, ahol a hibaüzenetet jelenítjük meg.
+ * @returns {boolean} Igaz, ha a mező nem üres, különben hamis.
+ */
 function validatecolumn(columnElement, errorElement) { // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
     let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
 
@@ -182,7 +222,17 @@ function validatecolumn(columnElement, errorElement) { // Függvény, amely egy 
     }
     return valid;
 }
-
+/**
+ * Második szintű validáció a szerelmi adatokra.
+ *
+ * Ellenőrzi, hogy ha a "Volt másik szerelme?" checkbox be van jelölve, akkor mindkét szerelmi adat mező
+ * (szerelem1Element és szerelem2Element) ki van-e töltve. A megfelelő hibaüzeneteket jeleníti meg, ha valamelyik mező üres.
+ *
+ * @param {HTMLInputElement} checkboxElement - A checkbox elem, amely azt jelzi, hogy van-e második szerelmi adat.
+ * @param {HTMLInputElement} szerelem1Element - Az első szerelmi adatot tartalmazó input mező.
+ * @param {HTMLInputElement} szerelem2Element - A második szerelmi adatot tartalmazó input mező.
+ * @returns {boolean} Igaz, ha a validáció sikeres, különben hamis.
+ */
 function secondValidation(checkboxElement, szerelem1Element, szerelem2Element) {
     let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
  
