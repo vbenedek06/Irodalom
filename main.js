@@ -34,6 +34,68 @@ document.body.appendChild(table); // Hozzáadjuk a táblázatot a dokumentum tö
 
 const tableHeader = document.createElement('thead'); // Táblázat fejléc elem létrehozása
 table.appendChild(tableHeader);
+
+// A generateForm függvény létrehozza és visszaadja az űrlap elemet.
+function generateForm() {
+    // Új <form> elem létrehozása.
+    const form = document.createElement('form');
+    // Az űrlap id attribútumának beállítása "form"-ra.
+    form.id = 'form';
+    // Az űrlap action attribútumának beállítása "#" értékre (jelenlegi oldal, nincs küldés).
+    form.action = '#';
+
+    // Definiálja az űrlap mezőit tartalmazó tömböt, melyben minden objektum egy mezőt reprezentál.
+    const columns = [
+        { label: 'Költő neve:', type: 'text', id: 'kolto_nev' },      // Szövegmező a költő nevének megadásához.
+        { label: 'Korszak:', type: 'text', id: 'korszak' },            // Szövegmező a korszak megadásához.
+        { label: 'Szerelme:', type: 'text', id: 'szerelem1' },          // Szövegmező az első szerelmi adat megadásához.
+        { label: 'Volt másik szerelme?', type: 'checkbox', id: 'masodik', checked: false }, // Jelölőnégyzet, ha volt még egy szerelme.
+        { label: 'Szerelme:', type: 'text', id: 'szerelem2' }           // Szövegmező a második szerelmi adat megadásához.
+    ];
+
+    for (let i = 0; i < columns.length; i++) {    // Végigiterál a columns tömb minden elemén.
+        const column = columns[i];        // Az aktuális mező objektumának lekérése.
+        const div = document.createElement('div');        // Új <div> elem létrehozása, amely az egyes mezőket fogja tartalmazni.
+        const label = document.createElement('label');        // Új <label> elem létrehozása a mezőhöz.
+        label.htmlFor = column.id;        // A label "for" attribútumának beállítása az aktuális mező id-jére.
+        label.innerText = column.label;        // A label szövegének beállítása a column objektumban megadott label értékre.
+
+
+        div.appendChild(label);// A label hozzáadása a <div>-hez.
+        // Új sor beszúrása a <div> elembe.
+        div.appendChild(document.createElement('br'));
+
+        const input = document.createElement('input');        // Új <input> elem létrehozása a mezőhöz.
+        input.type = column.type;        // Az input típusa a column objektumban megadott type érték szerint.
+        input.id = column.id;        // Az input id attribútumának beállítása.
+        input.name = column.id;        // Az input name attribútumának beállítása azonos értékre, mint az id.
+        if (column.type === 'checkbox' && column.checked !== undefined) {        // Ha az input egy checkbox, és van checked tulajdonság meghatározva, akkor azt beállítjuk.
+
+            input.checked = column.checked;
+        }
+        div.appendChild(input);        // Az input hozzáadása a <div>-hez.
+
+
+        const errorDiv = document.createElement('div');        // Új <div> elem létrehozása a hibaüzenetek megjelenítéséhez.
+
+        errorDiv.className = 'error-message';        // A hibaüzenet div osztályának beállítása "error-message"-re a stílusokhoz.
+        errorDiv.id = "error-" + column.id.replace("_", "-");        // A hibaüzenet div id-jének beállítása "error-" előtaggal, majd a column id-ből az "_" helyett "-" használatával.
+
+        div.appendChild(errorDiv);        // A hibaüzenet div hozzáadása a <div>-hez.
+        div.appendChild(document.createElement('br'));        // Új sor beszúrása a <div> elembe.
+        div.appendChild(document.createElement('br'));        // Még egy sor beszúrása az extra tér eléréséhez.
+        form.appendChild(div);        // A teljes <div> elem (label, input, hibaüzenet) hozzáadása az űrlaphoz.
+    }
+    const submit = document.createElement('button');    // Új <button> elem létrehozása, amely az űrlap elküldését szolgálja.
+    submit.type = 'submit';    // A gomb típusának beállítása "submit"-re.
+    submit.innerText = 'Hozzáadás';    // A gomb szövegének beállítása "Hozzáadás"-ra.
+    form.appendChild(submit);    // A gomb hozzáadása az űrlaphoz.
+    document.body.appendChild(form);    // Az elkészült űrlap hozzáadása a dokumentum <body> részéhez.
+    return form;    // A függvény visszaadja az űrlap elemet.
+
+}
+// A generateForm függvény meghívása, és az eredmény tárolása a formElement változóban.
+const formElement = generateForm();
 function generateTableHeader(headerData, tableHeader) {
     // Létrehozunk egy új sort (<tr>) a fejléc számára
     const headerRow = document.createElement('tr');
@@ -107,46 +169,48 @@ const form = document.getElementById('form'); // Megkeresi az `form` azonosító
 const koltoNevError = document.getElementById('error-kolto-nev'); // HTML elem lekérése, amely a szerző nevéhez tartozó hibaüzenetet jeleníti meg
 const korszakError = document.getElementById('error-korszak'); // HTML elem lekérése, amely a korszakhoz tartozó 
 // Validációs függvény: ellenőrzi, hogy az adott mező nem üres-e
-// A validateField függvény ellenőrzi, hogy egy űrlapmező (columnElement) nem üres-e, és ennek megfelelően kezeli a hozzá tartozó hibaüzenet elem (errorElement) láthatóságát.
-function validateField(columnElement, errorElement) { // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
+// A validatecolumn függvény ellenőrzi, hogy egy űrlapmező (columnElement) nem üres-e, és ennek megfelelően kezeli a hozzá tartozó hibaüzenet elem (errorElement) láthatóságát.
+function validatecolumn(columnElement, errorElement) { // Függvény, amely egy bemeneti mezőt és egy hibaüzenet elemet vár, hogy validálja a bemeneti mezőt
     let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
 
-    if (columnElement.value === "") {  // Ha a bemeneti mező értéke üres
-        errorElement.style.display = "block"; // A hibaüzenet megjelenítése láthatóvá válik
-        valid = false; // Az érték nem valid, így false-ra állítjuk
+    if (columnElement.value === "") {
+        errorElement.innerText = "Hiba: Ezt a mezőt kötelező kitölteni!";
+        errorElement.style.display = "block";
+        valid = false;
     } else {
-        errorElement.style.display = "none"; // Ha a mezőben van érték, elrejtjük a hibaüzenetet
+        errorElement.style.display = "none";
     }
-    return valid; // Visszaadja, hogy a mező valid-e
+    return valid;
 }
 
 function secondValidation(checkboxElement, szerelem1Element, szerelem2Element) {
     let valid = true; // A valid változó alapértelmezett értéke igaz, amely azt jelzi, hogy a mező helyes
+ 
+    const error1 = document.getElementById('error-szerelem1'); //  Lekérjük az első szerelem hibaüzenet elemét a DOM-ból.
+    const error2 = document.getElementById('error-szerelem2'); //  Lekérjük a második szerelem hibaüzenet elemét a DOM-ból.
 
-    if (checkboxElement.checked) {
-        if (szerelem1Element.value === "") { // Ellenőrizzük az első szerelem mezőt
-            const error1 = document.getElementById('error-szerelem1');
-            error1.style.display = "block"; // Megjelenítjük a hibaüzenetet
-            valid = false; // Érvénytelen, mert az első szerelem mező üres
+    if (checkboxElement.checked) { // Ellenőrizzük, hogy a "Volt másik szerelme?" checkbox be van-e jelölve.
+        // Ha a jelölőnégyzet be van jelölve, akkor mindkét szerelem mezőt kötelező kitölteni.
+        // Ellenőrizzük, hogy az első szerelem mező üres-e VAGY a második szerelem mező üres (a trim() eltávolítja a felesleges szóközöket).
+        if (szerelem1Element.value === "" || szerelem2Element.value === "") { 
+            error1.innerText = "A költőnek kötelező megadni a szerelemeit"; // Beállítjuk az első hibaüzenet szövegét.
+            error2.innerText = "A költőnek kötelező megadni a szerelemeit"; //  Beállítjuk a második hibaüzenet szövegét.
+            error1.style.display = "block"; //  Megjelenítjük az első hibaüzenetet.
+            error2.style.display = "block"; //  Megjelenítjük a második hibaüzenetet.
+            valid = false; // *** Mivel hiányosak az adatok, az űrlap érvényessége false lesz.
         } else {
-            document.getElementById('error-szerelem1').style.display = "none"; // Elrejtjük a hibaüzenetet
-        }
-
-        if (szerelem2Element.value === "") { // Ellenőrizzük a második szerelem mezőt 
-            const error2 = document.getElementById('error-szerelem2');
-            error2.style.display = "block"; // Megjelenítjük a hibaüzenetet
-            valid = false; // Érvénytelen, mert a második szerelem mező üres
-        } else {
-            document.getElementById('error-szerelem2').style.display = "none"; // Elrejtjük a hibaüzenetet
+            error1.style.display = "none"; //  Ha mindkét mező ki van töltve, elrejtjük az első hibaüzenetet.
+            error2.style.display = "none"; //  Ha mindkét mező ki van töltve, elrejtjük a második hibaüzenetet.
         }
     } else {
-        // Ha a jelölőnégyzet nincs bejelölve, elrejtjük a szerelem mezők esetleges hibaüzeneteit
-        document.getElementById('error-szerelem1').style.display = "none";
-        document.getElementById('error-szerelem2').style.display = "none";
+        // Ha a jelölőnégyzet nincs bejelölve, nem kell ellenőrizni a szerelem mezőket, ezért mindkét hibaüzenetet elrejtjük.
+        error1.style.display = "none";
+        error2.style.display = "none";
     }
-    return valid; // Visszaadjuk az eredményt
+    
+    return valid; // Visszatérünk a valid értékkel, amely azt jelzi, hogy az űrlap adatai érvényesek-e.
 }
-// Eseménykezelő beállítása az űrlap submit eseményéhez (amikor az űrlapot elküldik)
+
 form.addEventListener('submit', function (e) {
     e.preventDefault();                             // Megszakítja az űrlap alapértelmezett elküldési műveletét
 
@@ -160,11 +224,11 @@ form.addEventListener('submit', function (e) {
 
     let valid = true;
 
-    if (!validateField(koltoNev, koltoNevError)) {
+    if (!validatecolumn(koltoNev, koltoNevError)) {
         valid = false; // Ha hiba van a szerző neve mezőben, akkor az űrlapot érvénytelennek jelöljük
     }
 
-    if (!validateField(korszak, korszakError)) {
+    if (!validatecolumn(korszak, korszakError)) {
         valid = false; // Ha hiba van a korszak mezőben, akkor az űrlapot érvénytelennek jelöljük
     }
 
